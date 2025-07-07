@@ -1,3 +1,4 @@
+// unchanged imports
 import 'package:flutter/material.dart';
 import 'home.dart'; // Your HomePage
 
@@ -10,6 +11,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController idController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool isNumericInput = false;
   bool isPasswordVisible = false;
@@ -49,194 +51,240 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-          child: Column(
-            children: [
-              // Logo
-              Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  color: Color(0xFFFFCC00),
-                  borderRadius: BorderRadius.circular(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                // Logo
+                Container(
+                  height: 80,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFFCC00),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset('image/logipage.png', fit: BoxFit.cover),
                 ),
-                clipBehavior: Clip.antiAlias,
-                child: Image.asset('image/logipage.png', fit: BoxFit.cover),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Sign In',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+                SizedBox(height: 20),
+                Text(
+                  'Sign In',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 40),
 
-              SizedBox(height: 40),
-
-              // Email/Mobile Label
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Email / Mobile ',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
+                // Email / Mobile Label
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Email / Mobile ',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      TextSpan(
-                        text: '*',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.red,
+                        TextSpan(
+                          text: '*',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 8),
+                SizedBox(height: 8),
 
-              Row(
-                children: [
-                  if (isNumericInput)
-                    Container(
-                      width: 140,
-                      height: 50,
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade400),
+                Row(
+                  children: [
+                    if (isNumericInput)
+                      Container(
+                        width: 140,
+                        height: 50,
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedCountryCode,
+                            icon: Icon(Icons.arrow_drop_down),
+                            isExpanded: true,
+                            items: countryList.map((country) {
+                              return DropdownMenuItem(
+                                value: country['code'],
+                                child: Row(
+                                  children: [
+                                    Text(country['flag'] ?? ''),
+                                    SizedBox(width: 6),
+                                    Text(
+                                      '${country['code']} ${country['name']}',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() => selectedCountryCode = value!);
+                            },
+                          ),
+                        ),
+                      ),
+                    Expanded(
+                      child: TextFormField(
+                        controller: idController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: _inputDecoration(hint: "Email / Mobile"),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty)
+                            return "Required";
+                          final trimmed = value.trim();
+                          final isNumeric = RegExp(
+                            r'^\d{10}$',
+                          ).hasMatch(trimmed);
+                          if (isNumericInput && !isNumeric)
+                            return "Enter 10-digit mobile number";
+                          if (!isNumericInput) {
+                            final emailRegex = RegExp(
+                              r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                            );
+                            if (!emailRegex.hasMatch(trimmed))
+                              return "Enter valid email";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 24),
+
+                // Password
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Password ',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '*',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8),
+                TextFormField(
+                  controller: passwordController,
+                  obscureText: !isPasswordVisible,
+                  decoration: _inputDecoration(hint: "Password").copyWith(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () => setState(
+                        () => isPasswordVisible = !isPasswordVisible,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12),
+
+                // Forgot Password
+                Align(
+                  alignment: Alignment.center,
+                  child: TextButton(
+                    onPressed: () => _showForgotPasswordDialog(context),
+                    child: Text(
+                      "Forgot password?",
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Sign in button
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Please enter both ID and password"),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF1E2F5B),
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: selectedCountryCode,
-                          icon: Icon(Icons.arrow_drop_down),
-                          isExpanded: true,
-                          items: countryList.map((country) {
-                            return DropdownMenuItem(
-                              value: country['code'],
-                              child: Row(
-                                children: [
-                                  Text(country['flag'] ?? ''),
-                                  SizedBox(width: 6),
-                                  Text(
-                                    '${country['code']} ${country['name']}',
-                                    style: TextStyle(fontSize: 13),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() => selectedCountryCode = value!);
-                          },
-                        ),
-                      ),
+                      elevation: 4,
                     ),
-                  if (isNumericInput) SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: idController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: _inputDecoration(hint: "Email / Mobile"),
+                    child: Text(
+                      "Sign in as employee",
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 24),
+                ),
 
-              // Password
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Password ',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '*',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.red,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 8),
-              TextFormField(
-                controller: passwordController,
-                obscureText: !isPasswordVisible,
-                decoration: _inputDecoration(hint: "Password").copyWith(
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() => isPasswordVisible = !isPasswordVisible);
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 12),
+                SizedBox(height: 12),
 
-              Align(
-                alignment: Alignment.center,
-                child: TextButton(
-                  onPressed: () => _showForgotPasswordDialog(context),
-                  child: Text(
-                    "Forgot password?",
-                    style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.blue.shade700,
+                // Sign in as admin (no action yet)
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF1E2F5B),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 4,
+                    ),
+                    child: Text(
+                      "Sign in as admin",
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
-              ),
-
-              SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (idController.text.isNotEmpty &&
-                        passwordController.text.isNotEmpty) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Please enter both ID and password"),
-                        ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF1E2F5B),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    elevation: 4,
-                  ),
-                  child: Text("Sign In", style: TextStyle(color: Colors.white)),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -245,25 +293,41 @@ class _LoginPageState extends State<LoginPage> {
 
   void _showForgotPasswordDialog(BuildContext context) {
     final TextEditingController contactController = TextEditingController();
+    final GlobalKey<FormState> _dialogFormKey = GlobalKey<FormState>();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text("Forgot Password"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Enter registered email or phone"),
-            SizedBox(height: 12),
-            TextField(
-              controller: contactController,
-              decoration: InputDecoration(
-                hintText: "Email or phone",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+        content: Form(
+          key: _dialogFormKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Enter registered email or phone"),
+              SizedBox(height: 12),
+              TextFormField(
+                controller: contactController,
+                decoration: InputDecoration(
+                  hintText: "Email or phone",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
+                validator: (value) {
+                  final contact = value?.trim() ?? '';
+                  final isPhone = RegExp(r'^\d{10}$').hasMatch(contact);
+                  final isEmail = RegExp(
+                    r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                  ).hasMatch(contact);
+                  if (contact.isEmpty) return "Please enter email or mobile";
+                  if (!isPhone && !isEmail)
+                    return "Enter valid 10-digit mobile or valid email";
+                  return null;
+                },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -273,14 +337,10 @@ class _LoginPageState extends State<LoginPage> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF1E2F5B)),
             onPressed: () {
-              final contact = contactController.text.trim();
-              if (contact.isNotEmpty) {
+              if (_dialogFormKey.currentState!.validate()) {
+                final contact = contactController.text.trim();
                 Navigator.pop(context);
                 _showOtpDialog(context, contact);
-              } else {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text("Enter valid info")));
               }
             },
             child: Text("Next"),
@@ -304,27 +364,22 @@ class _LoginPageState extends State<LoginPage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 0.1),
             Text("Enter 6-digit code sent to $masked"),
             Align(
-              alignment: Alignment.centerLeft, // Align to start
+              alignment: Alignment.centerLeft,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero, // Remove extra space
-                  minimumSize: Size(0, 0), // Shrink tap area
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size(0, 0),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
-                  _showForgotPasswordDialog(context); // Go back to edit
+                  _showForgotPasswordDialog(context);
                 },
                 child: Text(
                   "Change",
-                  style: TextStyle(
-                    fontSize: 12, // Smaller font
-                    color: Colors.blue.shade700,
-                    fontWeight: FontWeight.normal,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
                 ),
               ),
             ),
