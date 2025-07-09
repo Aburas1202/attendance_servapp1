@@ -67,36 +67,16 @@ class _LoginPageState extends State<LoginPage> {
                   child: Image.asset('image/logipage.png', fit: BoxFit.cover),
                 ),
                 SizedBox(height: 20),
-                Text(
-                  'Sign In',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+                Text('Sign In', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 SizedBox(height: 40),
 
                 // Email / Mobile Label
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Email / Mobile ',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '*',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(text: 'Email / Mobile ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                    TextSpan(text: '*', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.red)),
+                  ])),
                 ),
                 SizedBox(height: 8),
 
@@ -123,10 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                                   children: [
                                     Text(country['flag'] ?? ''),
                                     SizedBox(width: 6),
-                                    Text(
-                                      '${country['code']} ${country['name']}',
-                                      style: TextStyle(fontSize: 13),
-                                    ),
+                                    Text('${country['code']} ${country['name']}', style: TextStyle(fontSize: 13)),
                                   ],
                                 ),
                               );
@@ -144,20 +121,13 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: _inputDecoration(hint: "Email / Mobile"),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty)
-                            return "Required";
+                          if (value == null || value.trim().isEmpty) return "Required";
                           final trimmed = value.trim();
-                          final isNumeric = RegExp(
-                            r'^\d{10}$',
-                          ).hasMatch(trimmed);
-                          if (isNumericInput && !isNumeric)
-                            return "Enter 10-digit mobile number";
+                          final isNumeric = RegExp(r'^\d{10}$').hasMatch(trimmed);
+                          if (isNumericInput && !isNumeric) return "Enter 10-digit mobile number";
                           if (!isNumericInput) {
-                            final emailRegex = RegExp(
-                              r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                            );
-                            if (!emailRegex.hasMatch(trimmed))
-                              return "Enter valid email";
+                            final emailRegex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                            if (!emailRegex.hasMatch(trimmed)) return "Enter valid email";
                           }
                           return null;
                         },
@@ -171,27 +141,10 @@ class _LoginPageState extends State<LoginPage> {
                 // Password
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Password ',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '*',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(text: 'Password ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                    TextSpan(text: '*', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.red)),
+                  ])),
                 ),
                 SizedBox(height: 8),
                 TextFormField(
@@ -199,14 +152,8 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: !isPasswordVisible,
                   decoration: _inputDecoration(hint: "Password").copyWith(
                     suffixIcon: IconButton(
-                      icon: Icon(
-                        isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () => setState(
-                        () => isPasswordVisible = !isPasswordVisible,
-                      ),
+                      icon: Icon(isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () => setState(() => isPasswordVisible = !isPasswordVisible),
                     ),
                   ),
                 ),
@@ -219,10 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () => _showForgotPasswordDialog(context),
                     child: Text(
                       "Forgot password?",
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Colors.blue.shade700,
-                      ),
+                      style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue.shade700),
                     ),
                   ),
                 ),
@@ -234,31 +178,17 @@ class _LoginPageState extends State<LoginPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HomeScreen(),
-                          ),
-                        );
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Please enter both ID and password"),
-                          ),
-                        );
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please enter both ID and password")));
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF1E2F5B),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       elevation: 4,
                     ),
-                    child: Text(
-                      "Sign in as employee",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    child: Text("Sign in as employee", style: TextStyle(color: Colors.white)),
                   ),
                 ),
 
@@ -272,15 +202,10 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF1E2F5B),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       elevation: 4,
                     ),
-                    child: Text(
-                      "Sign in as admin",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    child: Text("Sign in as admin", style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ],
@@ -310,19 +235,14 @@ class _LoginPageState extends State<LoginPage> {
                 controller: contactController,
                 decoration: InputDecoration(
                   hintText: "Email or phone",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 validator: (value) {
                   final contact = value?.trim() ?? '';
                   final isPhone = RegExp(r'^\d{10}$').hasMatch(contact);
-                  final isEmail = RegExp(
-                    r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                  ).hasMatch(contact);
+                  final isEmail = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(contact);
                   if (contact.isEmpty) return "Please enter email or mobile";
-                  if (!isPhone && !isEmail)
-                    return "Enter valid 10-digit mobile or valid email";
+                  if (!isPhone && !isEmail) return "Enter valid 10-digit mobile or valid email";
                   return null;
                 },
               ),
@@ -330,10 +250,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("Cancel"),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("Cancel")),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF1E2F5B)),
             onPressed: () {
@@ -368,19 +285,12 @@ class _LoginPageState extends State<LoginPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size(0, 0),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
+                style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                 onPressed: () {
                   Navigator.pop(context);
                   _showForgotPasswordDialog(context);
                 },
-                child: Text(
-                  "Change",
-                  style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
-                ),
+                child: Text("Change", style: TextStyle(fontSize: 12, color: Colors.blue.shade700)),
               ),
             ),
             SizedBox(height: 12),
@@ -391,9 +301,7 @@ class _LoginPageState extends State<LoginPage> {
               decoration: InputDecoration(
                 counterText: '',
                 hintText: "Enter code",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               ),
             ),
           ],
@@ -405,15 +313,9 @@ class _LoginPageState extends State<LoginPage> {
             onPressed: () {
               if (otpController.text.length == 6) {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Code verified! Password reset link sent."),
-                  ),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Code verified! Password reset link sent.")));
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Please enter a valid 6-digit code")),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please enter a valid 6-digit code")));
               }
             },
             child: Text("Submit"),
